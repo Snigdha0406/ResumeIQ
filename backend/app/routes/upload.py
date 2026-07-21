@@ -1,5 +1,5 @@
 from fastapi import APIRouter, UploadFile, File
-from app.services.resume_parser import extract_pdf_text
+from app.services.resume_parser import extract_resume_text
 import os
 import shutil
 
@@ -27,10 +27,7 @@ async def upload_resume(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    text = ""
-
-    if file.filename.endswith(".pdf"):
-        text = extract_pdf_text(file_path)
+    text = extract_resume_text(file_path)
 
     return {
         "message": "Resume uploaded successfully!",
