@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File
 from app.services.resume_parser import extract_resume_text
+from app.utils.text_cleaner import clean_text
 import os
 import shutil
 
@@ -28,7 +29,8 @@ async def upload_resume(file: UploadFile = File(...)):
         shutil.copyfileobj(file.file, buffer)
 
     text = extract_resume_text(file_path)
-
+    text=clean_text(text)
+    print(text)
     return {
         "message": "Resume uploaded successfully!",
         "filename": file.filename,
