@@ -1,5 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 from app.services.resume_parser import extract_resume_text
+from app.services.resume_analyzer import analyze_resume
+from app.services.ats_scorer import calculate_ats_score
 from app.utils.text_cleaner import clean_text
 import os
 import shutil
@@ -30,9 +32,14 @@ async def upload_resume(file: UploadFile = File(...)):
 
     text = extract_resume_text(file_path)
     text=clean_text(text)
+    ats_result=calculate_ats_score(text)
+    analysis=analyze_resume(text)
+    analysis["ats_score"]=ats_result["ats_score"]
+    analysis["score_breakdown"]=ats_result["score_breakdown"]
     print(text)
     return {
-        "message": "Resume uploaded successfully!",
-        "filename": file.filename,
-        "extracted_text": text
+    "message": "Resume uploaded successfully!",
+    "filename": file.filename,
+    "extracted_text": text,
+    "analysis": analysis
 }
